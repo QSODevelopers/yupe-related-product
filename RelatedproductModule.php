@@ -1,28 +1,62 @@
 <?php
-
-class RelatedproductModule extends CWebModule
+use yupe\components\WebModule;
+class RelatedproductModule extends WebModule
 {
-	public function init()
-	{
-		// this method is called when the module is being created
-		// you may place code here to customize the module or the application
+	const VERSION = '0.1';
 
-		// import the module-level models and components
-		$this->setImport(array(
-			'relatedproduct.models.*',
-			'relatedproduct.components.*',
-		));
+	public function getVersion()
+	{
+		return self::VERSION;
 	}
 
-	public function beforeControllerAction($controller, $action)
+	public function getDependencies()
 	{
-		if(parent::beforeControllerAction($controller, $action))
-		{
-			// this method is called before any module controller action is performed
-			// you may place customized code here
-			return true;
-		}
-		else
-			return false;
+		return [
+			'store',
+		];
+	}
+
+	// public function getCategory()
+	// {
+	// 	return Yii::t('RelatedproductModule.relatedproduct', 'Catalog');
+	// }
+
+	public function getName()
+	{
+		return Yii::t('RelatedproductModule.relatedproduct', 'Related products');
+	}
+
+	public function getDescription()
+	{
+		return Yii::t('RelatedproductModule.relatedproduct', 'Related products, that says it all');
+	}
+
+	public function getAuthor()
+	{
+		return Yii::t('RelatedproductModule.relatedproduct', 'UnnamedTeam');
+	}
+
+	public function getAuthorEmail()
+	{
+		return 'max100491@mail.ru';
+	}
+
+	public function getIcon()
+	{
+		return "fa fa-fw fa-th-list";
+	}
+
+	public function getAdminPageLink()
+	{
+		return "/relatedproduct/relatedproductBackend/index";
+	}
+
+	public function init()
+	{
+		$this->setImport(array(
+			'relatedproduct.components.*',
+		));
+
+		parent::init();
 	}
 }
