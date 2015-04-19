@@ -17,10 +17,18 @@ class RelatedproductBackendController extends yupe\components\controllers\BackCo
 
     public function actionRelation($id)
     {
+        $this->pageTitle = $model->name;
         $model = Product::model()->findByPk($id);
-        $this->pageTitle = Yii::t('RelatedproductModule.relatedproduct', 'Related products');
+
+        $grid = new StoreProduct('search');
+        $grid->unsetAttributes(); // clear any default values
+        if (isset($_GET['StoreProduct'])) {
+            $grid->attributes = $_GET['StoreProduct'];
+        }
+
         $this->render('relation', [
-            'model'=>$model
+            'model'=>$model,
+            'grid'=>$grid,
         ]);
     }
 }
