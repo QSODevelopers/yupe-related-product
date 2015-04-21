@@ -11,6 +11,9 @@
     </div>
 </div>
 
+<?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm'); ?>
+<?php print_r($model->errors); ?>
+<?php echo $form->hiddenField($model, 'id') ?>
 <div class="row">
     <div class="col-md-7">
         <?php
@@ -18,23 +21,39 @@
                 'dataProvider' => $grid->search(),
                 'filter' => $grid,
                 'columns'=>[
-                    'name',
+                    [
+                        'class'=>'CCheckBoxColumn',
+                        'id'=>'StoreProduct[ids]',
+                        'selectableRows' => 2,
+                        'name'=>'id',
+                        'value'=>'$data->id',
+                        'checked'=>function($data){
+                            if (empty($data->relationsTo))
+                                return false;
+                            return true;
+                        },
+                        'checkBoxHtmlOptions' => array('class' => 'classname'),
+                    ],
+                    'name'=>[
+                        'class'=>'bootstrap.widgets.TbImageColumn',
+                        'placeKittenSize'=>'g/48/48'
+                    ],
                     [
                         'name' => 'price',
                         'value' => function ($data) {
-                            return (float)$data->price;
+                            return $data->price;
                         },
                         'filter' => CHtml::activeTextField($grid, 'price', ['class' => 'form-control']),
                     ],
                     [
                         'name' => 'in_stock',
-                        'filter' => Product::model()->getInStockList(),
-                        'value'=>'Product::model()->getInStockList()[$data->in_stock]'
+                        'filter' => StoreProduct::model()->getInStockList(),
+                        'value'=>'StoreProduct::model()->getInStockList()[$data->in_stock]'
                     ],
                     [
                         'name' => 'status',
-                        'filter' => Product::model()->getStatusList(),
-                        'value'=>'Product::model()->getStatusList()[$data->status]'
+                        'filter' => StoreProduct::model()->getStatusList(),
+                        'value'=>'StoreProduct::model()->getStatusList()[$data->status]'
                     ]
                 ]
             ]);
@@ -42,3 +61,13 @@
     </div>
     <div class="col-md-5"></div>
 </div>
+<?php $this->widget(
+    'bootstrap.widgets.TbButton',
+    [
+        'buttonType' => 'submit',
+        'context' => 'primary',
+        'label' => Yii::t('RelatedproductModule', 'Save'),
+    ]
+); ?>
+
+<?php $this->endWidget(); ?>

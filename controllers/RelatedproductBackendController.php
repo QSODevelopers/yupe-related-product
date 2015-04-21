@@ -18,7 +18,11 @@ class RelatedproductBackendController extends yupe\components\controllers\BackCo
     public function actionRelation($id)
     {
         $this->pageTitle = $model->name;
-        $model = Product::model()->findByPk($id);
+        $model = StoreProduct::model()->findByPk($id);
+        if (isset($_POST['StoreProduct'])) {
+            $model->relationsTo = $_POST['StoreProduct']['ids'];
+            $model->save();
+        }
 
         $grid = new StoreProduct('search');
         $grid->unsetAttributes(); // clear any default values
