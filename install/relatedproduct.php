@@ -4,7 +4,7 @@ return [
         'class' => 'application.modules.relatedproduct.RelatedproductModule',
     ],
     'import'    => [
-        // 'application.modules.relatedproduct.models.*',
+        'application.modules.relatedproduct.models.*',
     ],
     'component' => [],
     'rules'     => [

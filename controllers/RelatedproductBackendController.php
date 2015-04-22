@@ -20,8 +20,13 @@ class RelatedproductBackendController extends yupe\components\controllers\BackCo
         $this->pageTitle = $model->name;
         $model = StoreProduct::model()->findByPk($id);
         if (isset($_POST['StoreProduct'])) {
-            $model->relationsTo = $_POST['StoreProduct']['ids'];
-            $model->save();
+            $model->setAttributes($_POST['StoreProduct']);
+            if ($model->updateRel()) {
+                Yii::app()->getUser()->setFlash(
+                    yupe\widgets\YFlashMessages::SUCCESS_MESSAGE,
+                    'Сопутствующие товары успешно сохранены'
+                );
+            }
         }
 
         $grid = new StoreProduct('search');

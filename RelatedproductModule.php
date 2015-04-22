@@ -54,7 +54,8 @@ class RelatedproductModule extends WebModule
 	public function init()
 	{
 		$this->setImport(array(
-			'relatedproduct.components.*',
+			'application.modules.relatedproduct.components.*',
+			'application.modules.relatedproduct.models.*',
 		));
 
 		parent::init();
