@@ -19,9 +19,10 @@ class RelatedProducts extends yupe\widgets\YWidget
         
         $model = StoreProduct::model()->findAll($criteria);
 
-        $this->render($this->view, [
-            'model'=>$model
-        ]);
+        if ($model)
+            $this->render($this->view, [
+                'model'=>$model
+            ]);
     }
 }
 ?>
