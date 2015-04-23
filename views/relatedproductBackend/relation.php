@@ -12,7 +12,6 @@
 </div>
 
 <?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm'); ?>
-<?php print_r($model->errors); ?>
 <?php echo $form->hiddenField($model, 'id') ?>
 <div class="row">
     <div class="col-md-7">
@@ -21,22 +20,9 @@
                 'dataProvider' => $grid->search(),
                 'filter' => $grid,
                 'columns'=>[
-                    [
-                        'class'=>'CCheckBoxColumn',
-                        'id'=>'StoreProduct[ids]',
-                        'selectableRows' => 2,
-                        'name'=>'id',
-                        'value'=>'$data->id',
-                        'checked'=>function($data){
-                            if (empty($data->relationsTo))
-                                return false;
-                            return true;
-                        },
-                        'checkBoxHtmlOptions' => array('class' => 'classname'),
-                    ],
                     'name'=>[
-                        'class'=>'bootstrap.widgets.TbImageColumn',
-                        'placeKittenSize'=>'g/48/48'
+                        'name'=>'name',
+                        // 'placeKittenSize'=>'g/48/48'
                     ],
                     [
                         'name' => 'price',
@@ -54,12 +40,50 @@
                         'name' => 'status',
                         'filter' => StoreProduct::model()->getStatusList(),
                         'value'=>'StoreProduct::model()->getStatusList()[$data->status]'
+                    ],
+                    [
+                        'class'=>'bootstrap.widgets.TbButtonColumn',
+                        'template'=>'{add}',
+                        'buttons'=>[
+                            'add'=>[
+                                'icon'=>'fa fa-arrow-right',
+                                'label'=>'Добавить сопутствующий товар',
+                                'url'=>'Yii::app()->controller->createUrl("/relatedproduct/relatedproductBackend/add", ["id"=>$data->primaryKey])',
+                                'click'=>"function(){
+                                    $.ajax({
+                                        url: this.href,
+                                        success: function(data){
+                                            $('#grid_related > table > tbody').prepend(data)
+                                        }
+                                    });
+                                    
+                                    return false;
+                                }"
+                            ]
+                        ]
                     ]
                 ]
             ]);
         ?>
     </div>
-    <div class="col-md-5"></div>
+    <div class="col-md-5">
+        <?php $grid = $this->widget('bootstrap.widgets.TbGridView',[
+            'dataProvider'=>$model->getRelatedProducts(),
+            'id'=>'grid_related',
+            'columns'=>[
+                [
+                    'class'          => 'CCheckBoxColumn',
+                    'id'             => 'StoreProduct[ids]',
+                    'selectableRows' => 2,
+                    'name'           => 'id',
+                    'value'          => '$data->id',
+                    'checked'        => 'true',
+                ],
+                'name'
+            ]
+        ]);
+        ?>
+    </div>
 </div>
 <?php $this->widget(
     'bootstrap.widgets.TbButton',

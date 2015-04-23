@@ -34,10 +34,18 @@ class RelatedproductBackendController extends yupe\components\controllers\BackCo
         if (isset($_GET['StoreProduct'])) {
             $grid->attributes = $_GET['StoreProduct'];
         }
-
         $this->render('relation', [
             'model'=>$model,
             'grid'=>$grid,
+        ]);
+    }
+
+    public function actionAdd($id)
+    {
+        // echo $id;
+        $data = StoreProduct::model()->loadModel($id);
+        $this->renderPartial('element',[
+            'data'=>$data
         ]);
     }
 }

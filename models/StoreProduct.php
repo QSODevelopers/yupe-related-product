@@ -22,6 +22,7 @@ class StoreProduct extends Product
 			// 'relationsTo'            => [self::HAS_MANY, 'Relatedproduct', 'id_product'],
 			'relationsTo'               => [self::HAS_MANY, 'Relatedproduct', 'id_product'],
 			'relation'                  => [self::MANY_MANY, 'Product', '{{relatedproduct_relations}}(id_product, product_id)'],
+			'relationTo'                => [self::MANY_MANY, 'Product', '{{relatedproduct_relations}}(product_id, id_product)'],
 			'category'                  => [self::BELONGS_TO, 'StoreCategory', 'category_id'],
 			'producer'                  => [self::BELONGS_TO, 'StoreProducer', 'producer_id'],
 			'type'                      => [self::BELONGS_TO, 'StoreType', 'type_id'],
@@ -76,5 +77,16 @@ class StoreProduct extends Product
 		   $transaction->rollback();
 		   return false;
 		}
+	}
+
+	public function getRelatedProducts()
+	{
+		$criteria = new CDbCriteria;
+		$criteria->with = 'relationTo';
+		$criteria->together = true;
+		$criteria->compare('relationTo.id', $this->id);
+		return new CActiveDataProvider($this, [
+			'criteria'=>$criteria
+		]);
 	}
 }
