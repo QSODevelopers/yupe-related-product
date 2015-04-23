@@ -1,5 +1,4 @@
 <?php
-Yii::import('application.modules.relatedproduct.behaviors.EAdvancedArBehavior');
 class StoreProduct extends Product
 {
 	public $ids;
@@ -35,47 +34,38 @@ class StoreProduct extends Product
 
 	public function updateRel()
 	{
-		$db = Yii::app()->db;
 
-		$transaction = $db->beginTransaction();
+		$transaction = Yii::app()->getDb()->beginTransaction();
 		try
 		{
-			if (!empty($this->relationsTo)) {
-				$ids = [];
-				foreach ($this->relationsTo as $key => $value)
-					$ids[]=$value->product_id;
+			$arrayId = [];
+			foreach ($this->ids as $key => $val) {
+				$model = Relatedproduct::model()->findByAttributes(['id_product'=>$this->id, 'product_id'=>$val]);
+				$model = $model ? : new Relatedproduct;
+
+				$model->id_product = $this->id;
+				$model->product_id = $val;
+				if ($model->save())
+					$arrayId[] = $model->primaryKey;
+
 			}
-			
-			if (!empty($this->ids) && !empty($ids)) {
-				
-				$add = array_diff($this->ids, $ids);
-				$dell = array_diff($ids, $this->ids);
-				
-				foreach ($add as $key => $value) {
-					$db->createCommand()->insert('{{relatedproduct_relations}}', [
-						'id_product'=>$this->id,
-						'product_id'=>$value,
-					]);
-				}
 
-				foreach ($dell as $key => $value) {
-					$db->createCommand()->delete('{{relatedproduct_relations}}', 'id_product=:id_product, product_id=:product_id', [
-						':id_product'=>$this->id,
-						':product_id'=>$value,
-					]);
-				}
 
-				$transaction->commit();
-			}else
-				return false;
+			$criteria = new CDbCriteria();
+            $criteria->addCondition('id_product = :id_product');
+            $criteria->params = [':id_product' => $this->id];
+            $criteria->addNotInCondition('id', $arrayId);
+            Relatedproduct::model()->deleteAll($criteria);
+
+			$transaction->commit();
 
 			parent::beforeSave();
 			return true;
 		}
 		catch(Exception $e)
 		{
-		   $transaction->rollback();
-		   return false;
+			$transaction->rollback();
+			return false;
 		}
 	}
 
