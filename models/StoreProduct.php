@@ -34,6 +34,8 @@ class StoreProduct extends Product
 
 	public function updateRel()
 	{
+		if (!is_array($this->ids))
+			$this->ids = [];
 
 		$transaction = Yii::app()->getDb()->beginTransaction();
 		try
